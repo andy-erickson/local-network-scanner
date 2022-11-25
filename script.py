@@ -37,10 +37,8 @@ def initialScan(ip, endCount):
     scan = subprocess.Popen(["nmap", "-sn", ip[:-endCount]+"1-255", "--exclude", ip], stdout=subprocess.PIPE).communicate()[0]
     string = scan.decode("UTF-8")
     startIndexes = [i.start() for i in re.finditer("Nmap scan report for", string)]
-    names = []
-    ips = []
-    macs = []
-    deviceTypes = []
+    names, ips, macs, deviceTypes = [], [], [], []
+
     for i in startIndexes:
         end = 0
         mac = None
