@@ -30,7 +30,8 @@ def getIPv4():
         if temp[i].isdigit():
             count += 1
         else: return temp, count
-        
+
+#def initialScan():        
 ipRange, count = getIPv4()
 
 scan = subprocess.Popen(["nmap", "-sn", ipRange[:-count]+"1-255", "--exclude", ipRange], stdout=subprocess.PIPE).communicate()[0]
@@ -38,6 +39,9 @@ string = scan.decode("UTF-8")
 #print(scan)
 startIndexes = [i.start() for i in re.finditer("Nmap scan report for", string)]
 names = []
+ips = []
+macs = []
+deviceTypes = []
 for i in startIndexes:
     end = 0
     mac = None
@@ -58,11 +62,19 @@ for i in startIndexes:
     if macIndex != -1:
         mac = sub[macIndex+13:sub.find(' ', macIndex+13)]
         deviceType = sub[sub.find('(',macIndex+13)+1:sub.find(')',macIndex+13)]
-    print(f"Name: {name}")
-    print(f"IP: {ip}")
-    print(f"MAC Address: {mac}")
-    print(f"Device Type: {deviceType}")
-    print()
+    #print(f"Name: {name}")
+    #print(f"IP: {ip}")
+    #print(f"MAC Address: {mac}")
+    #print(f"Device Type: {deviceType}")
+    #print()
+    names.append(name)
+    ips.append(ip)
+    macs.append(mac)
+    deviceTypes.append(deviceType)
+print(names)
+print(ips)
+print(macs)
+print(deviceTypes)
                
     
     
