@@ -31,52 +31,52 @@ def getIPv4():
             count += 1
         else: return temp, count
 
-#def initialScan():        
-ipRange, count = getIPv4()
 
-scan = subprocess.Popen(["nmap", "-sn", ipRange[:-count]+"1-255", "--exclude", ipRange], stdout=subprocess.PIPE).communicate()[0]
-string = scan.decode("UTF-8")
-#print(scan)
-startIndexes = [i.start() for i in re.finditer("Nmap scan report for", string)]
-names = []
-ips = []
-macs = []
-deviceTypes = []
-for i in startIndexes:
-    end = 0
-    mac = None
-    sub = string[i+21:]
-    sub = sub.replace("\r", '')
-    end = sub.find("Nmap scan report for")
-    if end == -1:
-        end = sub.find("Nmap done:")
-    #print(sub[:end])
-    sub = sub[:end]
-    if sub.find("\n") < sub.find('('):
-        name = sub[:sub.find("\n")]
-        ip = name
-    else:
-        name = sub[:sub.find('(')]
-        ip = sub[len(name)+1:sub.find(')')]
-    macIndex = sub.find("MAC Address:")
-    if macIndex != -1:
-        mac = sub[macIndex+13:sub.find(' ', macIndex+13)]
-        deviceType = sub[sub.find('(',macIndex+13)+1:sub.find(')',macIndex+13)]
-    #print(f"Name: {name}")
-    #print(f"IP: {ip}")
-    #print(f"MAC Address: {mac}")
-    #print(f"Device Type: {deviceType}")
-    #print()
-    names.append(name)
-    ips.append(ip)
-    macs.append(mac)
-    deviceTypes.append(deviceType)
-print(names)
-print(ips)
-print(macs)
-print(deviceTypes)
-               
+# performs initial Nmap scan and returns quick basic information on all devices in tuple of lists
+def initialScan(ip, endCount):     
+    scan = subprocess.Popen(["nmap", "-sn", ip[:-endCount]+"1-255", "--exclude", ip], stdout=subprocess.PIPE).communicate()[0]
+    string = scan.decode("UTF-8")
+    startIndexes = [i.start() for i in re.finditer("Nmap scan report for", string)]
+    names = []
+    ips = []
+    macs = []
+    deviceTypes = []
+    for i in startIndexes:
+        end = 0
+        mac = None
+        sub = string[i+21:]
+        sub = sub.replace("\r", '')
+        end = sub.find("Nmap scan report for")
+        if end == -1:
+            end = sub.find("Nmap done:")
+        sub = sub[:end]
+        if sub.find("\n") < sub.find('('):
+            name = sub[:sub.find("\n")]
+            ip = name
+        else:
+            name = sub[:sub.find('(')]
+            ip = sub[len(name)+1:sub.find(')')]
+        macIndex = sub.find("MAC Address:")
+        if macIndex != -1:
+            mac = sub[macIndex+13:sub.find(' ', macIndex+13)]
+            deviceType = sub[sub.find('(',macIndex+13)+1:sub.find(')',macIndex+13)]
+        names.append(name)
+        ips.append(ip)
+        macs.append(mac)
+        deviceTypes.append(deviceType)
+    return names, ips, macs, deviceTypes
     
     
+
+if __name__ == "__main__": 
+    
+    ip, endCount = getIPv4()    
+    baseScan = initialScan(ip, endCount)
+
+    for i in range(len(baseScan[0])):
+        print(f"Name: {baseScan[0][i]}")
+        print(f"IP: {baseScan[1][i]}")
+        print(f"MAC: {baseScan[2][i]}")
+        print(f"Device Type: {baseScan[3][i]}\n")
 
 
