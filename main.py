@@ -12,8 +12,6 @@ class App:
         self.label_text = StringVar()
         titleLabel = Label(root, text="Network scanner", bg="orange", font=("Calibri",24))
         titleLabel.pack()        
-        #localIP = Label(root, text="Your local IP: "+localIP[0], font=("Calibri",16))
-        #localIP.pack()
         localScanButton = Button(root, text="Scan your local network", command=self.localInitialScan)
         localScanButton.pack()        
         label2 = Label(root, text="or scan custom IP/range (e.g.: 192.168.1.1-255):", font=("Calibri",10))
@@ -23,6 +21,7 @@ class App:
         entry.pack()
         button = Button(root, text="Begin", command=self.press_button)
         button.pack()
+        
     def localInitialScan(self):
         temp = script.getIPv4()
         localLabel = Label(root, text="Your local IP: "+temp[0], font=("Calibri",18))
@@ -40,10 +39,8 @@ class App:
                
      
 root = Tk()
-#myLabel = Label(root, text="Network scanner")
 localIP = script.getIPv4()
 print("Hi")   
-#myLabel.pack()
 App(root,localIP)
 print("Hola")
 root.mainloop()
