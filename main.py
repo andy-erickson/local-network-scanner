@@ -23,6 +23,7 @@ class App:
         #deviceListBox = Listbox(root)
         #deviceListBox.pack()
         
+        
     def localScan(self):
         temp = script.getIPv4()
         localLabel = Label(root, text="Your local IP: "+temp[0], font=("Calibri",18))
@@ -46,6 +47,8 @@ class App:
     def customScan(self):
         text = self.entry_text.get()
         self.label_text.set(text)
+        localLabel = Label(root, text="Scanning: "+text, font=("Calibri",18))
+        localLabel.pack()        
         deviceList = script.initialScan(text,0)
         self.buildListBox(deviceList)
         #print(baseResults)
@@ -57,7 +60,27 @@ class App:
             try:
                 deviceListBox.insert(END, items[0][i])
             except:
-                deviceListBox.insert("end", items[0][i])        
+                deviceListBox.insert("end", items[0][i])       
+        #bottomInfo = Label(root, text=deviceListBox.get(ANCHOR), font=("Calibri",10)).pack(pady=50)
+        #bottomInfo.config(text=deviceListBox.get(ANCHOR))
+        def moreInfo():
+            #deviceListBox.delete(ANCHOR)
+            #deviceInfo.set(text=deviceListBox.get(ANCHOR))
+            deviceInfo.config(text="Device name: "+deviceListBox.get(ANCHOR)+"\n\nahhh")
+
+            
+        my_button = Button(root, text="More info", command=moreInfo)
+        my_button.pack()
+        global deviceInfo
+        deviceStr = StringVar()
+        deviceStr.set("aaaa")
+        deviceInfo = Label(root, text=deviceStr, bg="white")
+        deviceInfo.pack(pady=5)
+        deviceInfo.config(text=deviceListBox.get(ANCHOR))
+        
+        
+                
+        
                
      
 root = Tk()
