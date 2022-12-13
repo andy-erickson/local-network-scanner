@@ -33,8 +33,12 @@ def getIPv4():
 
 
 # performs initial Nmap scan and returns quick basic information on all devices in tuple of lists
-def initialScan(ip, endCount):     
-    scan = subprocess.Popen(["nmap", "-sn", ip[:-endCount]+"1-255", "--exclude", ip], stdout=subprocess.PIPE).communicate()[0]
+def initialScan(ip, endCount):
+    if endCount != 0:
+        scan = subprocess.Popen(["nmap", "-sn", ip[:-endCount]+"1-255", "--exclude", ip], stdout=subprocess.PIPE).communicate()[0]
+    else:
+        print(ip)
+        scan = subprocess.Popen(["nmap", "-sn", ip], stdout=subprocess.PIPE).communicate()[0]
     string = scan.decode("UTF-8")
     startIndexes = [i.start() for i in re.finditer("Nmap scan report for", string)]
     names, ips, macs, deviceTypes = [], [], [], []
@@ -58,10 +62,12 @@ def initialScan(ip, endCount):
         if macIndex != -1:
             mac = sub[macIndex+13:sub.find(' ', macIndex+13)]
             deviceType = sub[sub.find('(',macIndex+13)+1:sub.find(')',macIndex+13)]
+            
         names.append(name)
         ips.append(ip)
         macs.append(mac)
         deviceTypes.append(deviceType)
+        
     return names, ips, macs, deviceTypes
     
     
