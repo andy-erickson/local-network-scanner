@@ -19,30 +19,15 @@ class App:
         entry = Entry(root, textvariable=self.entry_text)
         entry.pack()
         Button(root, text="Begin", command=self.customScan).pack(pady=10)
-        #button.pack(pady=10)
-        #deviceListBox = Listbox(root)
-        #deviceListBox.pack()
         
         
     def localScan(self):
         temp = script.getIPv4()
         localLabel = Label(root, text="Your local IP: "+temp[0], font=("Calibri",18))
         localLabel.pack() 
-        #print(script.initialScan(temp[0],temp[1]))
         deviceList = script.initialScan(temp[0],temp[1])
         self.buildListBox(deviceList)
-        """
-        deviceListBox = Listbox(root)
-        deviceListBox.pack()        
-        for i in range(len(deviceList[0])):
-            try:
-                deviceListBox.insert(END, deviceList[0][i])
-            except:
-                deviceListBox.insert("end", deviceList[0][i])
-                """
-        """
-            deviceLabel = Label(root, text="Device name: "+deviceList[0][i]+"\nIP: "+deviceList[1][i]+"\nMAC Address: "+deviceList[2][i]+"\nDevice Type: "+deviceList[3][i]+"\n\n", font=("Calibri",10))
-            deviceLabel.pack()"""                
+                  
         
     def customScan(self):
         text = self.entry_text.get()
@@ -51,7 +36,7 @@ class App:
         localLabel.pack()        
         deviceList = script.initialScan(text,0)
         self.buildListBox(deviceList)
-        #print(baseResults)
+
         
     def buildListBox(self, items):
         deviceListBox = Listbox(root)
@@ -61,14 +46,11 @@ class App:
                 deviceListBox.insert(END, items[0][i])
             except:
                 deviceListBox.insert("end", items[0][i])       
-        #bottomInfo = Label(root, text=deviceListBox.get(ANCHOR), font=("Calibri",10)).pack(pady=50)
-        #bottomInfo.config(text=deviceListBox.get(ANCHOR))
         def moreInfo():
-            #deviceListBox.delete(ANCHOR)
-            #deviceInfo.set(text=deviceListBox.get(ANCHOR))
-            deviceInfo.config(text="Device name: "+deviceListBox.get(ANCHOR)+"\n\nahhh")
+            device = deviceListBox.get(ANCHOR)
+            itemIndex = items[0].index(device)
+            deviceInfo.config(text="Device name: "+items[0][itemIndex]+"\nIP: "+items[1][itemIndex]+"\nMAC Address: "+items[2][itemIndex]+"\nDevice Type: "+items[3][itemIndex])
 
-            
         my_button = Button(root, text="More info", command=moreInfo)
         my_button.pack()
         global deviceInfo
