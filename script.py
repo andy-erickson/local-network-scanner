@@ -2,11 +2,10 @@ import subprocess
 import re
 import time
 
-#returns local wifi IP from substring of return from ipconfig on windows
+#returns local wifi IP from substring of ipconfig output on windows
 def getIPv4(): 
     ipScan = subprocess.Popen(["ipconfig"], stdout=subprocess.PIPE).communicate()[0]
     string = ipScan.decode()
-
     wifiIndex = string.find("Wireless LAN adapter Wi-Fi:")
     sub = string[wifiIndex:]
     ipIndex = sub.find("IPv4 Address")
@@ -33,7 +32,7 @@ def getIPv4():
         else: return temp, count
 
 
-# performs initial Nmap scan and returns quick basic information on all devices in tuple of lists
+# performs initial Nmap scan and returns quick basic information on all devices in 2D array
 def initialScan(ip, endCount):
     if endCount != 0:
         scan = subprocess.Popen(["nmap", "-sn", ip[:-endCount]+"1-255", "--exclude", ip], stdout=subprocess.PIPE).communicate()[0]
@@ -63,7 +62,6 @@ def initialScan(ip, endCount):
         if macIndex != -1:
             mac = sub[macIndex+13:sub.find(' ', macIndex+13)]
             deviceType = sub[sub.find('(',macIndex+13)+1:sub.find(')',macIndex+13)]
-            
         names.append(name)
         ips.append(ip)
         macs.append(mac)
@@ -71,13 +69,12 @@ def initialScan(ip, endCount):
         
     return names, ips, macs, deviceTypes
 
+
+# calls initialScan and checks for differences between new call and previous call passed in as arg
 def logScan(baseScan, ip, endCount):
-    time.sleep(60)
-    #print("running")
     newScan = initialScan(ip, endCount)
     redundancy = initialScan(ip, endCount)
     if baseScan[0] != newScan[0] and baseScan[0] != redundancy[0]:
-        #print(f"\nCHANGE at {time.ctime()}")
         for i in range(len(baseScan[0])):
             if baseScan[0][i] not in newScan[0] and baseScan[0][i] not in redundancy[0]:
                 with open('logFile.txt', 'a') as f:
@@ -109,13 +106,14 @@ if __name__ == "__main__":
         
     choice = input("Would you like to log connections? (Y/N): ")
     if choice.upper() == 'Y':
-        print("All entries logged to file \"logFile.txt\" in program directory\n")
+        print("All entries stored to \"logFile.txt\" located in program directory\n")
         f = open("./logFile.txt", "w")
         f.close()
         while True:
+            time.sleep(60)
             baseScan = logScan(baseScan, ip, endCount)
     else:
-        print("Goodbye")
+        print("\nGoodbye\n")
         
     
 
