@@ -68,6 +68,8 @@ class App:
         
     def buildListBox(self, items):
         global deviceListBox, infoButton, deviceInfo
+        logButton = Button(root, text="Log connected devices", command=self.localScan)
+        logButton.pack()
         deviceListBox = Listbox(root)
         deviceListBox.pack(padx=20, fill=BOTH)        
         for i in range(len(items[0])):
@@ -85,13 +87,12 @@ class App:
             deviceInfo.config(text="Device name: "+items[0][itemIndex]+"\nIP: "+items[1][itemIndex]+"\nMAC Address: "+items[2][itemIndex]+"\nDevice Type: "+items[3][itemIndex])
             try:
                 deviceScanButton.pack_forget()
+                pScan.pack_forget()
             except:
                 pass
-            try:
-                ports.destroy()
-            except:
-                pass
-            self.portScanDevice(items[1][itemIndex])    
+            
+            self.portScanDevice(items[1][itemIndex])
+            return
                 
             
 
@@ -108,15 +109,33 @@ class App:
         
     
     def portScanDevice(self, ip):
-        global deviceScanButton, ports
+        global deviceScanButton
+        global pScan
         #deviceScanButton = Button(root, text="Port scan this device", command=lambda: Label(root, text=script.portScan(ip),bg="white").pack(fill=BOTH))
+        try:
+            pScan.pack_forget()
+        except:
+            print("nope")
         deviceScanButton = Button(root, text="Port scan this device", command=lambda: sub(ip))
         deviceScanButton.pack()
         def sub(ip):
-            ports = Label(root, text=script.portScan(ip),bg="white").pack(fill=BOTH)
+            print("Broken")
+            pScan = Label(root, text=script.portScan(ip),bg="white")
+            pScan.pack()
             deviceScanButton.pack_forget()
         #Label(root, text=out, bg="white")
         print("got it")
+        
+    def logScan(self):
+        temp = script.getIPv4
+        deviceList = script.initialScan(temp[0],temp[1])
+        while True:
+            time.sleep(60)
+            deviceList = script.logScan(deviceList,temp[0],temp[1])
+            self.buildListBox(deviceList)
+            print("LoGgEd")
+            
+        
         
         
                 
