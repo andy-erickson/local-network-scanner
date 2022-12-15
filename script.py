@@ -1,5 +1,6 @@
 import subprocess
 import re
+import time
 
 #returns local wifi IP from substring of return from ipconfig on windows
 def getIPv4(): 
@@ -69,6 +70,29 @@ def initialScan(ip, endCount):
         deviceTypes.append(deviceType)
         
     return names, ips, macs, deviceTypes
+
+def logScan(baseScan, ip, endCount):
+    time.sleep(60)
+    #print("running")
+    newScan = initialScan(ip, endCount)
+    redundancy = initialScan(ip, endCount)
+    if baseScan[0] != newScan[0] and baseScan[0] != redundancy[0]:
+        #print(f"\nCHANGE at {time.ctime()}")
+        for i in range(len(baseScan[0])):
+            if baseScan[0][i] not in newScan[0] and baseScan[0][i] not in redundancy[0]:
+                with open('logFile.txt', 'a') as f:
+                    f.write(f"Removed {time.ctime()}\nName: {baseScan[0][i]}\nIP: {baseScan[1][i]}\nMAC: {baseScan[2][i]}\nDevice Type: {baseScan[3][i]}\n\n")
+                    print(f"Device removed on {time.ctime()}: {baseScan[0][i]}")
+                f.close()
+        for i in range(len(newScan[0])):
+            if newScan[0][i] not in baseScan[0] and newScan[0][i] in redundancy[0]:
+                with open('logFile.txt', 'a') as f:
+                    f.write(f"Added {time.ctime()}\nName: {newScan[0][i]}\nIP: {newScan[1][i]}\nMAC: {newScan[2][i]}\nDevice Type: {newScan[3][i]}\n\n")
+                    print(f"Device added on {time.ctime()}: {newScan[0][i]}")
+                f.close()                        
+               
+        return newScan
+    return baseScan
     
     
 
@@ -76,11 +100,23 @@ if __name__ == "__main__":
     
     ip, endCount = getIPv4()    
     baseScan = initialScan(ip, endCount)
-
+    print(f"Connected devices at {time.ctime()}:\n")
     for i in range(len(baseScan[0])):
         print(f"Name: {baseScan[0][i]}")
         print(f"IP: {baseScan[1][i]}")
         print(f"MAC: {baseScan[2][i]}")
         print(f"Device Type: {baseScan[3][i]}\n")
+        
+    choice = input("Would you like to log connections? (Y/N): ")
+    if choice.upper() == 'Y':
+        print("All entries logged to file \"logFile.txt\" in program directory\n")
+        f = open("./logFile.txt", "w")
+        f.close()
+        while True:
+            baseScan = logScan(baseScan, ip, endCount)
+    else:
+        print("Goodbye")
+        
+    
 
 
