@@ -113,7 +113,10 @@ def portScan(ip):
         return s        
     
     
-    
+def tempGUIlog(baseScan, ip, endCount):
+    while True:
+        time.sleep(60)
+        baseScan = logScan(baseScan, ip, endCount)
 
 if __name__ == "__main__": 
     

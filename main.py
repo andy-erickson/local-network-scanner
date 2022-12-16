@@ -12,7 +12,7 @@ class App:
         self.label_text = StringVar()
         global localScanButton, infoLabel,entry, begin
         titleLabel = Label(root, text="Network scanner", bg="orange", font=("Calibri",24)).pack(pady=10)       
-        localScanButton = Button(root, text="Scan your local network", command=self.localScan)
+        localScanButton = Button(root, text="Scan local network", command=self.localScan)
         localScanButton.pack()
         
         infoLabel = Label(root, text="or other IP/range (e.g.: 192.168.1.1-255):", font=("Calibri",10)).pack(pady=2)
@@ -38,12 +38,14 @@ class App:
             infoButton.pack_forget()
             deviceInfo.pack_forget()
             localLabel.pack_forget()
+            logButton.pack_forget()
+            pScan.pack_forget()
         except:
             pass
            
         #localScanButton.pack_forget()
         temp = script.getIPv4()
-        localLabel = Label(root, text="Your local IP: "+temp[0], font=("Calibri",18))
+        localLabel = Label(root, text="Your Local IP: "+temp[0], font=("Calibri",18))
         localLabel.pack(pady=5) 
         deviceList = script.initialScan(temp[0],temp[1])
         self.buildListBox(deviceList)
@@ -67,7 +69,7 @@ class App:
 
         
     def buildListBox(self, items):
-        global deviceListBox, infoButton, deviceInfo
+        global deviceListBox, infoButton, deviceInfo, logButton
         logButton = Button(root, text="Log connected devices", command=self.localScan)
         logButton.pack()
         deviceListBox = Listbox(root)
@@ -87,7 +89,7 @@ class App:
             deviceInfo.config(text="Device name: "+items[0][itemIndex]+"\nIP: "+items[1][itemIndex]+"\nMAC Address: "+items[2][itemIndex]+"\nDevice Type: "+items[3][itemIndex])
             try:
                 portScanButton.pack_forget()
-                
+                #infoButton.pack_forget()
             except:
                 pass
             
@@ -103,7 +105,8 @@ class App:
                 
                             
         infoButton = Button(root, text="More info", command=moreInfo)
-        infoButton.pack()    
+        infoButton.pack()
+        #global deviceInfo      
         deviceStr = StringVar()
         deviceStr.set("aaaa")
         deviceInfo = Label(root, text=deviceStr, bg="white")
