@@ -90,6 +90,28 @@ def logScan(baseScan, ip, endCount):
                
         return newScan
     return baseScan
+
+def newLog(baseScan):
+    with open('logFile.txt', 'w') as f:
+        for i in range(len(baseScan[0])):
+            f.write(f"Added {time.ctime()}\nName: {baseScan[0][i]}\nIP: {baseScan[1][i]}\nMAC: {baseScan[2][i]}\nDevice Type: {baseScan[3][i]}\n\n")
+            print(f"Added to log {time.ctime()}: {baseScan[0][i]}")
+    f.close()    
+
+def portScan(ip):
+    scan = subprocess.Popen(["nmap", "-sS", ip], stdout=subprocess.PIPE).communicate()[0]
+    print(scan)
+    string = scan.decode()
+    loc = string.find("open")
+    if loc == -1:
+        s = "No open ports found"
+        print(s)
+        return s        
+    else:
+        s = f"Port {string[loc-9:loc+4].strip()}"
+        print(s)
+        return s        
+    
     
     
 
@@ -107,14 +129,13 @@ if __name__ == "__main__":
     choice = input("Would you like to log connections? (Y/N): ")
     if choice.upper() == 'Y':
         print("All entries stored to \"logFile.txt\" located in program directory\n")
-        f = open("./logFile.txt", "w")
-        f.close()
+        newLog(baseScan)
         while True:
             time.sleep(60)
             baseScan = logScan(baseScan, ip, endCount)
     else:
         print("\nGoodbye\n")
-        
+
     
 
 
