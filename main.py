@@ -4,17 +4,13 @@ import script
 
 class App:
     def __init__(self,root,localIP):
-        root.title("Network Scanner")
-        root.geometry("500x600")
-        #root.maxsize(1000,800)
-        #scrollbar = Scrollbar(root)
-        #scrollbar.pack( side = RIGHT, fill = Y )        
-        self.label_text = StringVar()
         global localScanButton, infoLabel,entry, begin
+        root.title("Network Scanner")
+        root.geometry("500x600")    
+        self.label_text = StringVar()
         titleLabel = Label(root, text="Network scanner", bg="orange", font=("Calibri",24)).pack(pady=10)       
         localScanButton = Button(root, text="Scan local network", command=self.localScan)
         localScanButton.pack()
-        
         infoLabel = Label(root, text="or other IP/range (e.g.: 192.168.1.1-255):", font=("Calibri",10)).pack(pady=2)
         self.entry_text = StringVar()
         entry = Entry(root, textvariable=self.entry_text)
@@ -42,8 +38,6 @@ class App:
             pScan.pack_forget()
         except:
             pass
-           
-        #localScanButton.pack_forget()
         temp = script.getIPv4()
         localLabel = Label(root, text="Your Local IP: "+temp[0], font=("Calibri",18))
         localLabel.pack(pady=5) 
@@ -81,7 +75,8 @@ class App:
                     deviceListBox.itemconfig(END, {'bg':'#efea86'})
                     items[3][i] += "\nSome device information revealed by MAC address"
             except:
-                deviceListBox.insert("end", items[0][i])       
+                deviceListBox.insert("end", items[0][i])  
+                
         def moreInfo():
             global portScanButton
             device = deviceListBox.get(ANCHOR)
@@ -89,24 +84,19 @@ class App:
             deviceInfo.config(text="Device name: "+items[0][itemIndex]+"\nIP: "+items[1][itemIndex]+"\nMAC Address: "+items[2][itemIndex]+"\nDevice Type: "+items[3][itemIndex])
             try:
                 portScanButton.pack_forget()
-                #infoButton.pack_forget()
             except:
                 pass
             
             portScanButton = Button(root, text="Port scan this device", command=lambda: self.portScanDevice(device))
             portScanButton.pack()            
             try:
-                #portScanButton.pack_forget()
                 pScan.pack_forget()
             except:
                 pass
-            
-            return
-                
-                            
+            return  
+        
         infoButton = Button(root, text="More info", command=moreInfo)
-        infoButton.pack()
-        #global deviceInfo      
+        infoButton.pack()    
         deviceStr = StringVar()
         deviceStr.set("aaaa")
         deviceInfo = Label(root, text=deviceStr, bg="white")
@@ -118,19 +108,13 @@ class App:
     
     def portScanDevice(self, ip):
         global pScan
-        #deviceScanButton = Button(root, text="Port scan this device", command=lambda: Label(root, text=script.portScan(ip),bg="white").pack(fill=BOTH))
         try:
             portScanButton.pack_forget()
-            #pScan.pack_forget()
         except:
             pass        
-
-
         pScan = Label(root, text=script.portScan(ip),bg="white")
         pScan.pack()
-        #portScanButton.pack_forget()
-        #Label(root, text=out, bg="white")
-        print("got it")
+
         
     def logScan(self):
         temp = script.getIPv4
@@ -139,19 +123,11 @@ class App:
             time.sleep(60)
             deviceList = script.logScan(deviceList,temp[0],temp[1])
             self.buildListBox(deviceList)
-            print("LoGgEd")
+
             
         
         
-        
-                
-        
-               
-     
 root = Tk()
 localIP = script.getIPv4()
-print("Hi")   
 App(root,localIP)
-print("Hola")
 root.mainloop()
-print("yo")

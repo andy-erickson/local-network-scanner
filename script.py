@@ -12,6 +12,7 @@ def getIPv4():
     ipSub = sub[ipIndex+12:]
     ip = ''
     ipArr = []
+    
     for i, digit in enumerate(ipSub):
         if digit.isnumeric():
             ip += digit
@@ -22,7 +23,6 @@ def getIPv4():
                     ip = ''
                 continue
             ip += digit 
-        
     print(f"Local IP : {ipArr[0]}\n")
     temp = ipArr[0]
     count = 0
@@ -66,7 +66,6 @@ def initialScan(ip, endCount):
         ips.append(ip)
         macs.append(mac)
         deviceTypes.append(deviceType)
-        
     return names, ips, macs, deviceTypes
 
 
@@ -87,9 +86,9 @@ def logScan(baseScan, ip, endCount):
                     f.write(f"Added {time.ctime()}\nName: {newScan[0][i]}\nIP: {newScan[1][i]}\nMAC: {newScan[2][i]}\nDevice Type: {newScan[3][i]}\n\n")
                     print(f"Device added on {time.ctime()}: {newScan[0][i]}")
                 f.close()                        
-               
         return newScan
     return baseScan
+
 
 def newLog(baseScan):
     with open('logFile.txt', 'w') as f:
@@ -97,6 +96,7 @@ def newLog(baseScan):
             f.write(f"Added {time.ctime()}\nName: {baseScan[0][i]}\nIP: {baseScan[1][i]}\nMAC: {baseScan[2][i]}\nDevice Type: {baseScan[3][i]}\n\n")
             print(f"Added to log {time.ctime()}: {baseScan[0][i]}")
     f.close()    
+
 
 def portScan(ip):
     scan = subprocess.Popen(["nmap", "-sS", ip], stdout=subprocess.PIPE).communicate()[0]
@@ -118,8 +118,10 @@ def tempGUIlog(baseScan, ip, endCount):
         time.sleep(60)
         baseScan = logScan(baseScan, ip, endCount)
 
+
+
+
 if __name__ == "__main__": 
-    
     ip, endCount = getIPv4()    
     baseScan = initialScan(ip, endCount)
     print(f"Connected devices at {time.ctime()}:\n")
